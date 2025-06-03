@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(compression());
 
 
-app.use('/api/movies', movieRoutes);
+app.use('/api/v1', movieRoutes);
 
 app.get('/', (req, res) => {
   res.json({
