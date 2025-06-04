@@ -17,6 +17,7 @@ export const getMoviesByGenreService = async (
   genre,
   sort,
   year,
+  country,
   channelId
 ) => {
   try {
@@ -27,6 +28,7 @@ export const getMoviesByGenreService = async (
       ...(genre && { genre }),
       ...(sort && { sort }),
       ...(year && { year }),
+      ...(country && { country }),
       channelId,
       perPage: 18,
     };
