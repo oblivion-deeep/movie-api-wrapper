@@ -8,11 +8,12 @@ export const getMoviesByGenreController = async (req, res) => {
     const genre = req.query.genre;
     const sort = req.query.sort;
     const year = req.query.year;
+    const country = req.query.country;
     const channelId = CHANNEL_IDS[channelName?.toLowerCase()];
     if (!channelId) {
       return res.status(400).json({ error: 'Invalid channel name provided.' });
     }
-    const response = await  getMoviesByGenreService(page, genre, sort, year, channelId);
+    const response = await  getMoviesByGenreService(page, genre, sort, year, country, channelId);
     res.status(200).json(response);
   } catch (error) {
     console.error(error);
