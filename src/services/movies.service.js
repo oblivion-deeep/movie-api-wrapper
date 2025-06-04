@@ -12,7 +12,7 @@ function getRandomUserAgent() {
   return new UserAgent({ deviceCategory: isMobile ? "mobile" : "desktop" });
 }
 
-export const getMoviesByGenreService = async (
+export const getMoviesByGenreService = async ( 
   page,
   genre,
   sort,
@@ -34,24 +34,39 @@ export const getMoviesByGenreService = async (
     };
     console.log(requestBody);
 
-    const response = await axios.post(filter, requestBody, {
-      headers: {
-        accept: "application/json",
-        "accept-language": "en-GB,en;q=0.9",
-        priority: "u=1, i",
-        "user-agent": userAgent.toString(),
-        "sec-ch-ua": "Chromium;v=136, Google Chrome;v=136, Not.A/Brand;v=99",
-        "sec-ch-ua-mobile":
-          userAgent.data.deviceCategory === "mobile" ? "?1" : "?0",
-        "sec-ch-ua-platform": userAgent.data.platform || "Windows",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "x-client-info": '{"timezone":"Africa/Lagos"}',
-        "x-source": "",
-        "referrer-policy": "strict-origin-when-cross-origin",
-      },
-    });
+    // Set correct referer based on channelId
+    let referer = 'https://moviebox.ng';
+    if (channelId === 1006) {
+      referer = 'https://moviebox.ng/web/animated-series';
+    } else if (channelId === 2) {
+      referer = 'https://moviebox.ng/web/tv-series';
+    } else if (channelId === 1) {
+      referer = 'https://moviebox.ng/web/film';
+    }
+
+    const headers = {
+      accept: 'application/json',
+      'accept-encoding': 'gzip, deflate, br, zstd',
+      'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+      'content-type': 'application/json',
+      cookie: 'i18n_lang=en; _ga=GA1.1.1233380562.1748892912; account=3178832500353289608|0|H5|1748911805|; _ga_LF2XQTEPMF=GS2.1.s1749074403$o9$g0$t1749074403$j60$l0$h0',
+      origin: 'https://moviebox.ng',
+      referer: referer,
+      'sec-ch-ua': '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': userAgent.data.platform || "Windows",
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-origin',
+      'user-agent': userAgent.toString(),
+      'x-client-info': '{"timezone":"Africa/Lagos"}'
+    };
+
+    const response = await axios.post(
+      'https://moviebox.ng/wefeed-h5-bff/web/filter',
+      requestBody,
+      { headers }
+    );
 
     const movies =
       response.data?.data?.items?.map((item) => ({
@@ -86,6 +101,7 @@ export const getMoviesByGenreService = async (
     throw error;
   }
 };
+
 
 export const getMoviesBySearchService = async (page, searchTerm, year) => {
   try {
